@@ -8,7 +8,8 @@ const {
 } = require("react-native-reanimated/metro-config");
 
 /** @type {import('expo/metro-config').MetroConfig} */
-const config = getDefaultConfig(import.meta.dirname);
+// biome-ignore lint/correctness/noGlobalDirnameFilename: Metro 以 CommonJS 加载此文件，import.meta 不可用
+const config = getDefaultConfig(__dirname);
 
 const uniwindConfig = withUniwindConfig(wrapWithReanimatedMetroConfig(config), {
 	cssEntryFile: "./global.css",

@@ -194,11 +194,12 @@ specs/
      每条给出：严重级别(P0/P1/P2)、文件:行号、问题、触发场景、修复建议。没有问题就输出 NO_ISSUES。
      ```
      按该命令自身的流程执行，拿到 Codex 的审查意见后进入第 2 步。如果该命令内部已经包含“Claude 与 Codex 来回讨论直到通过”的循环，就以它的结论为准，第 4 步的轮次限制仍然适用。
-   - **兜底：Codex CLI**（`/codex-review` 不可用时）：
+   - **兜底：Codex CLI**（`/codex-review` 不可用时）。`codex review --commit/--uncommitted` 不能同时传自定义提示词，所以用 `codex exec` 只读模式，在提示词里指定要看的改动：
      ```bash
-     codex review --uncommitted "<同上审查说明>" > /tmp/ewb-cr-<文件夹>-<task编号>.md 2>&1
+     codex exec --sandbox read-only -o <临时目录>/cr-<文件夹>-<task编号>.md \
+       "你是代码审查者。用 git diff HEAD 和 git status 查看当前未提交的改动（含未跟踪文件）。<同上审查说明>"
      ```
-     `--uncommitted` 会覆盖已暂存、未暂存和未跟踪的改动，不改动暂存区。
+     临时文件按 spec 文件夹与 task 编号命名，避免并行 agent 互相覆盖。
    - 无论哪种方式，Codex 都会把代码发给 OpenAI：发送前确认改动里没有密钥、`.env` 等敏感内容。
 2. **Claude 复核**：逐条评估 Codex 的意见，读相关代码验证，给每条下结论：
    - `接受`：问题成立且可修复 → 修复。

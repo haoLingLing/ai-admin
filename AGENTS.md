@@ -222,3 +222,12 @@ Biome will catch most mechanical issues automatically. Focus your attention on:
 ---
 
 Most formatting and common issues are automatically fixed by Biome. Run `pnpm exec ultracite fix` before committing to ensure compliance.
+
+---
+
+## 开发经验沉淀
+
+- [2026-10-30][01-username-auth-server] `ultracite fix` 的 `noGlobalDirnameFilename` 会把 CommonJS 配置（如 `apps/native/metro.config.js`）里的 `__dirname` 改成 `import.meta.dirname`，导致 Metro 无法加载 → CJS 文件不支持 `import.meta` → 保留 `__dirname` 并加 `// biome-ignore lint/correctness/noGlobalDirnameFilename: <原因>`；批量 `pnpm fix` 后检查 `.js` 配置文件的非空白改动。
+- [2026-10-30][01-username-auth-server] 模板代码本身有约 60 个 Biome 报错（`noJsxPropsBind`、`noNestedTernary` 等），`pnpm check` 全仓不会通过 → 历史遗留 → 自检时用 `pnpm exec biome check <改动的文件>`，要求改动过的文件零报错。
+- [2026-10-30][01-username-auth-server] `biome.json` 已排除 `apps/fumadocs`（自带根配置，嵌套会报错）、`.agents`（第三方 skill 脚本）和 Varlock 生成的 `**/src/env.ts`，不要对它们跑 `ultracite fix`。
+- [2026-10-30][01-username-auth-server] `codex review --commit <SHA>` 不能同时传自定义提示词（报 `cannot be used with '[PROMPT]'`）→ CLI 限制 → 需要自定义审查说明时用 `codex exec --sandbox read-only -o <输出文件> "<提示词，内含 git show/diff 指令>"`。

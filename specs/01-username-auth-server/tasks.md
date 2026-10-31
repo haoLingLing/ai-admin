@@ -3,7 +3,7 @@
 > 状态说明：`[ ]` 未完成，`[✅]` 已完成（已通过 CR 与自动化测试）
 > 并行标记：`(P)` 表示与同组其他 `(P)` 任务无依赖，可并行
 
-- [ ] 1. 修复 lint 配置
+- [✅] 1. 修复 lint 配置
   - `biome.json` 中 `nursery.useTailwindSortedClasses` 改为当前 Biome 支持的 `useSortedClasses`，使 `pnpm check` 可以运行
   - 涉及文件：`biome.json`
   - 对应需求：非功能需求

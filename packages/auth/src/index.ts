@@ -2,6 +2,14 @@ import type { Database } from "@ai-admin/db";
 import { expo } from "@better-auth/expo";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { username } from "better-auth/plugins";
+
+import {
+	isValidUsername,
+	PASSWORD_MIN_LENGTH,
+	USERNAME_MAX_LENGTH,
+	USERNAME_MIN_LENGTH,
+} from "./username";
 
 export type AuthConfig = {
 	BETTER_AUTH_URL: string;
@@ -26,8 +34,17 @@ export function createAuth(
 		database: prismaAdapter(database, {
 			provider: "postgresql",
 		}),
-		emailAndPassword: { enabled: true },
-		plugins: [expo()],
+		// 只允许用户名登录：邮箱仅作为注册时的占位字段
+		disabledPaths: ["/sign-in/email"],
+		emailAndPassword: { enabled: true, minPasswordLength: PASSWORD_MIN_LENGTH },
+		plugins: [
+			expo(),
+			username({
+				maxUsernameLength: USERNAME_MAX_LENGTH,
+				minUsernameLength: USERNAME_MIN_LENGTH,
+				usernameValidator: isValidUsername,
+			}),
+		],
 		secret: env.BETTER_AUTH_SECRET,
 		trustedOrigins: [
 			env.CORS_ORIGIN,
